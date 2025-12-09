@@ -23,26 +23,14 @@ function index(req, res) {
 
 // show
 function show(req, res) {
-  // Transform to number the id of URL
-  const id = Number(req.params.id);
+  const id = req.params.id
 
-  // Find the post with the id that be search
-  const specificPost = getFind(id);
-
-  // Controll if the post exist
-  if (!specificPost) {
-    // Change the status
-    res.status(404);
-
-    // Return an error
-    return res.json({
-      error: "Not found",
-      message: "Post not find",
-    });
-  }
-
-  // Response whit the specific post
-  res.json(specificPost);
+  const sql = 'SELECT * FROM posts WHERE id = ?'
+  connection.query(sql, [id], (err, results) => {
+    if(err) return res.status(500).json({error: 'Database query failed'})
+      if(results.length === 0) return res.status(404).json({error: 'Post not found'})
+        res.json(results[0])
+  })
 }
 
 // destroy
