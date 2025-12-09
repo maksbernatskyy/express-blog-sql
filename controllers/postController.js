@@ -47,32 +47,12 @@ function show(req, res) {
 
 // destroy
 function destroy(req, res) {
-  // Tranform to number the id of URL
-  const id = Number(req.params.id);
+  const {id} = req.params
 
-  // Find the post with the id that be search
-  const specificPost = getFind(id);
-
-  // Controll if the post exist
-  if (!specificPost) {
-    // Change the status
-    res.status(404);
-
-    // Return an error
-    return res.json({
-      error: "Not found",
-      message: "Post not find",
-    });
-  }
-
-  // Remove the post
-  blog.splice(blog.indexOf(specificPost), 1);
-
-  // Show the updated list
-  console.log(blog);
-
-  // Response with the status 204
-  res.sendStatus(204);
+  connection.query('DELETE FROM posts WHERE id = ?', [id], (err) => {
+    if(err) return res.status(500).json({error: 'Failed to delete post'})
+      res.status(204)
+  })
 }
 
 // store
